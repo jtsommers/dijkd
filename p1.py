@@ -3,10 +3,18 @@ from math import sqrt
 from heapq import heappush, heappop
 
 def dijkstras_shortest_path(src, dst, graph, adj):
-  raise NotImplementedError	
+	raise NotImplementedError	
 
 def navigation_edges(level, cell):
-  raise NotImplementedError
+	# Valid movement deltas
+	deltas = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)];
+	validMoves = []
+	for pair in delta:
+		position = (cell[0] + pair[0], cell[1] + pair[1])
+		if position in level['spaces']:
+			validMoves.append(position)
+
+	return validMoves
 
 def test_route(filename, src_waypoint, dst_waypoint):
 	level = load_level(filename)
