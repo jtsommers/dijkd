@@ -3,6 +3,34 @@ from math import sqrt
 from heapq import heappush, heappop
 
 def dijkstras_shortest_path(src, dst, graph, adj):
+	dist = {}
+	prev = {}
+	dist[src] = 0
+	prev[src] = None
+
+	queue = []
+	heappush(queue, (src, dst[src])
+
+	while len(queue) > 0:
+		node = heappop(queue)
+
+		if node == dst:
+			break
+
+		adjacent = adj(graph, node)
+		for neighbor in adjacent:
+			cost = sqrt((neighbor[0] - node[0])^2 + (neighbor[1] - node[1])^2)
+			totalCost = dist[node] + cost
+
+			if neighbor not in dist or totalCost < dist[neighbor]:
+				dist[neighbor] = totalCost
+				prev[neighbor] = node
+				heappush(queue, (neighbor, totalCost))
+
+	# Path found build it
+	if node == dst:
+		pass
+
 	raise NotImplementedError	
 
 def navigation_edges(level, cell):
