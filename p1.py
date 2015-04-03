@@ -1,6 +1,7 @@
 from p1_support import load_level, show_level
 from math import sqrt
 from heapq import heappush, heappop
+import operator
 
 def dijkstras_shortest_path(src, dst, graph, adj):
 	dist = {}
@@ -13,50 +14,47 @@ def dijkstras_shortest_path(src, dst, graph, adj):
 	heappush(queue, (src, dist[src])) # ( (0,0), 0)
 
 	while queue: #(len(queue) > 0):
-		node, cost = heappop(queue) 
+		node, pathCost = heappop(queue) 
 
 		if node == dst:
 			break
 
 		adjacent = adj(graph, node)
 
-		for neighbor in adjacent:
-			
-			# exponentiation in Python is done using a ** b and not a ^ b
-			cost = sqrt(   (neighbor[0] - node[0]) ** 2  + (neighbor[1] - node[1]) ** 2  )
-			totalCost = dist[node] + cost
+		# Extract (position, cost) from list of adjacent states
+		for neighbor, cost in adjacent:
+			totalCost = pathCost + cost
 
 			if neighbor not in dist or totalCost < dist[neighbor]:
 				dist[neighbor] = totalCost
-				prev[neighbor] = node # parent of [ neigbor ] is node
+				prev[neighbor] = node # parent of [ neighbor ] is node
 				heappush(queue, (neighbor, totalCost))
 
-	# Path found build it
+	path = []
+	# Path found build it, else return empty path
 	if node == dst:
-		# path = [dst]  
-		# nextNode = prev[node] # gets the previous node of the destination node
-		nextNode = dst
-		path = []
-		while prev[nextNode]: # while there is parent of that node
-			
-			path.append(nextNode) 
-			nextNode = prev[nextNode] # find the parent of this node
+		# Traverse up the parent tree
+		while node: # while there is a parent (prev[src] = None)
+			path.append(node) 
+			node = prev[node] # update to the parent
 
-		path.append(nextNode) # add the last node, which is the source
-		path.reverse() 
-		return path  #return a list of nodes from source node to destination node
-		#pass
+		# Path is from dst to src, reverse it
+		path.reverse()
 
-	return []
+	return path
 
 def navigation_edges(level, cell):
 	# Valid movement deltas
 	deltas = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)];
 	validMoves = []
 	for pair in deltas:
-		position = (cell[0] + pair[0], cell[1] + pair[1])
+		# Calculate new position: cell + deltas[i]
+		position = tuple(map(operator.add, cell, pair))
+		# Calculate edge cost
+		cost = sqrt(pair[0] ** 2 + pair[1] ** 2)
 		if position in level['spaces']:
-			validMoves.append(position)
+			# Valid move is a tuple (nextState, edgeCost)
+			validMoves.append((position, cost))
 
 	return validMoves
 
