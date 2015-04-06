@@ -50,6 +50,9 @@ def dijkstras_shortest_path(src, dst, graph, adj):
 		# Path is from dst to src, reverse it
 		path.reverse()
 
+	if path:
+		debug("Path: ", path)
+		debug("Path cost: ", pathCost)
 	return path
 
 def navigation_edges(level, cell):
@@ -93,10 +96,12 @@ def test_route(filename, src_waypoint, dst_waypoint):
 	path = dijkstras_shortest_path(src, dst, level, navigation_edges)
 
 	if path:
-		debug("Path: ", path)
 		show_level(level, path)
 	else:
 		print "No path possible!"
+		# Show the level if the user hasn't already seen it
+		if not VERBOSE:
+			show_level(level, [])
 
 if __name__ ==  '__main__':
 	import sys
