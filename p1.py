@@ -3,6 +3,12 @@ from math import sqrt
 from heapq import heappush, heappop
 import operator
 
+VERBOSE = False
+
+def debug(*args):
+	if (VERBOSE):
+		print ''.join([str(arg) for arg in args])
+
 def dijkstras_shortest_path(src, dst, graph, adj):
 	dist = {}
 	prev = {}
@@ -79,7 +85,9 @@ def navigation_edges(level, cell):
 def test_route(filename, src_waypoint, dst_waypoint):
 	level = load_level(filename)
 
-	show_level(level)
+	if VERBOSE:
+		print("Level layout:")
+		show_level(level)
 
 	src = level['waypoints'][src_waypoint]
 	dst = level['waypoints'][dst_waypoint]
@@ -87,12 +95,26 @@ def test_route(filename, src_waypoint, dst_waypoint):
 	path = dijkstras_shortest_path(src, dst, level, navigation_edges)
 
 	if path:
-		print path
+		debug("Path: ", path)
 		show_level(level, path)
 	else:
 		print "No path possible!"
 
 if __name__ ==  '__main__':
 	import sys
-	_, filename, src_waypoint, dst_waypoint = sys.argv
-	test_route(filename, src_waypoint, dst_waypoint)
+
+	# Use command line options
+	from optparse import OptionParser
+
+	parser = OptionParser(usage="usage: %prog [options] level_file src_waypoint dst_waypoint")
+	parser.add_option("-v", "--verbose", dest="verbose", help="use verbose logging", action="store_true", default=False)
+
+	(options, args) = parser.parse_args()
+	# Make sure the appropriate number of arguments was supplied
+	if (len(args) != 3):
+		print "Unexpected argument count."
+		parser.print_help()
+	else:
+		VERBOSE = options.verbose
+		filename, src_waypoint, dst_waypoint = args
+		test_route(filename, src_waypoint, dst_waypoint)
