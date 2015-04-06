@@ -21,7 +21,7 @@ def dijkstras_shortest_path(src, dst, graph, adj):
 	# If tuple is used, the first element will be used as key (key, data)
 	heappush(queue, (dist[src], src)) 
 
-	while queue : #(len(queue) > 0):
+	while queue:
 		pathCost, node = heappop(queue)
 
 		if node == dst:
@@ -68,8 +68,8 @@ def navigation_edges(level, cell):
 	validMoves = []
 	for delta in deltas.values():
 
-		# Calculate new position: cell + deltas[i]
-		position = tuple(map(operator.add, cell, delta)) # tuple(cell[0]+delta[0], cell[1]+delta[1])
+		# Calculate new position
+		position = (cell[0]+delta[0], cell[1]+delta[1])
 		
 		if position in level['spaces']:
 			# Calculate edge cost
