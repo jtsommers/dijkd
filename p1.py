@@ -11,10 +11,12 @@ def dijkstras_shortest_path(src, dst, graph, adj):
 
 	queue = []
 	
-	heappush(queue, (src, dist[src])) # ( (0,0), 0)
+	# Python heapq (heap, item) : item can be a tuple or single value
+	# If tuple is used, the first element will be used as key (key, data)
+	heappush(queue, (dist[src], src )) 
 
-	while queue: #(len(queue) > 0):
-		node, pathCost = heappop(queue) 
+	while queue : #(len(queue) > 0):
+		pathCost, node = heappop(queue)  
 
 		if node == dst:
 			break
@@ -22,13 +24,14 @@ def dijkstras_shortest_path(src, dst, graph, adj):
 		adjacent = adj(graph, node)
 
 		# Extract (position, cost) from list of adjacent states
-		for neighbor, cost in adjacent:
+		for   neighbor, cost in adjacent:
 			totalCost = pathCost + cost
-
+			#print totalCost
 			if neighbor not in dist or totalCost < dist[neighbor]:
 				dist[neighbor] = totalCost
 				prev[neighbor] = node # parent of [ neighbor ] is node
-				heappush(queue, (neighbor, totalCost))
+				heappush(queue, ( totalCost, neighbor)) 
+			
 
 	path = []
 	# Path found build it, else return empty path
@@ -45,17 +48,32 @@ def dijkstras_shortest_path(src, dst, graph, adj):
 
 def navigation_edges(level, cell):
 	# Valid movement deltas
-	deltas = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)];
+	deltas = {
+			  'LEFT_DOWN':	(-1, -1), 
+			  'LEFT': 		(-1, 0), 
+			  'LEFT_UP': 	(-1, 1), 
+	          'DOWN': 		(0, -1), 
+	          'UP': 		(0, 1), 
+	          'RIGHT_DOWN': (1, -1), 
+	          'RIGHT': 		(1, 0), 
+	          'RIGHT_UP':	(1, 1)
+	         };
+	#deltas = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)];
+	
 	validMoves = []
-	for pair in deltas:
+	for pair in deltas.values():
+	#for pair in deltas: 
+
 		# Calculate new position: cell + deltas[i]
-		position = tuple(map(operator.add, cell, pair))
-		# Calculate edge cost
-		cost = sqrt(pair[0] ** 2 + pair[1] ** 2)
+		position = tuple(map(operator.add, cell, pair)) # tuple(cell[0]+pair[0], cell[1]+pair[1])
+		
 		if position in level['spaces']:
+			# Calculate edge cost
+			cost = sqrt(pair[0] ** 2 + pair[1] ** 2)
+
 			# Valid move is a tuple (nextState, edgeCost)
 			validMoves.append((position, cost))
-
+	
 	return validMoves
 
 def test_route(filename, src_waypoint, dst_waypoint):
